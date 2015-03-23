@@ -1,5 +1,5 @@
-module 1self
+module Oneself
   class Event
-
+    
   end
 end
