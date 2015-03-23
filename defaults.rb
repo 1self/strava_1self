@@ -8,8 +8,16 @@ module Defaults
   end
 
   SESSION_SECRET = from_file("session_secret.txt")
+  HOST_URL = "http://localhost:5000"
+  SYNC_ENDPOINT = "/sync"
+
   STRAVA_CLIENT_ID = from_file("strava_client_id.txt")
   STRAVA_CLIENT_SECRET = from_file("strava_client_secret.txt")
+
+  ONESELF_API_HOST = "http://app-staging.1self.co"
+  ONESELF_STREAM_ENDPOINT = "/v1/users/%s/streams"
+  ONESELF_APP_ID = from_file("oneself_app_id.txt")
+  ONESELF_APP_SECRET = from_file("oneself_app_secret.txt")
 end
 
 
