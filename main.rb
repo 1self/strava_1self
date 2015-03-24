@@ -21,6 +21,20 @@ get '/login' do
   redirect to("/auth/strava")
 end
 
+get '/sync' do
+  strava_id = params[:strava_uid]
+  streamid = params[:streamid]
+  write_token = request.env['HTTP_AUTHORIZATION']
+
+  stream = {
+    "streamid": streamid,
+    "writeToken": write_token
+  }
+
+  start_sync(strava_id, stream)
+end
+
+
 get '/auth/strava/callback' do
   begin
     strava_user_id = request.env['omniauth.auth']['uid']
@@ -36,7 +50,7 @@ get '/auth/strava/callback' do
                                       strava_user_id
                                       )
 
-    sync(strava_user_id, stream)
+    start_sync(strava_user_id, stream)
 
     redirect(Defaults::ONESELF_API_HOST + '/integrations')
   rescue => e
@@ -44,7 +58,8 @@ get '/auth/strava/callback' do
   end
 end
 
-def sync(strava_id, stream)
+
+def start_sync(strava_id, stream)
   sync_start_event = Oneself::Event.sync("start")
   Oneself::Event.send_via_api(sync_start_event, stream)
   puts "Sent sync start event successfully"
