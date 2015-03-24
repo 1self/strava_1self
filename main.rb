@@ -3,9 +3,11 @@ require "sinatra/reloader"
 require 'omniauth'
 require 'omniauth-strava-oauth2'
 require 'pg'
+require 'byebug'
 
 require_relative 'defaults'
 require_relative 'lib/Oneself'
+require_relative 'lib/StravaHelper'
 
 get '/' do
   "There's nothing here."
@@ -20,38 +22,51 @@ get '/login' do
 end
 
 get '/auth/strava/callback' do
-  instagram_user_id = request.env['omniauth.auth']['uid']
-  username = request.env['omniauth.auth']['info']['firstname']
-  auth_token = request.env['omniauth.auth']['credentials']['token']
+  begin
+    strava_user_id = request.env['omniauth.auth']['uid']
+    username = request.env['omniauth.auth']['info']['firstname']
+    auth_token = request.env['omniauth.auth']['credentials']['token']
 
-  conn = PG::Connection.open(:dbname => 'dev')
-  conn.exec_params('INSERT INTO USERS (name, instagram_id, access_token) VALUES ($1, $2, $3)', [username, instagram_user_id, auth_token])
-  
-  stream = Oneself::Stream.register(session['oneselfUsername'],
-                                    session['registrationToken'],
-                                    instagram_user_id
-                                    )
+    last_sync_time = (DateTime.now << 1).to_time.to_i
+    conn = PG::Connection.open(:dbname => 'dev')
+    conn.exec_params('INSERT INTO USERS (name, strava_id, access_token, last_sync_time) VALUES ($1, $2, $3, $4)', [username, strava_user_id.to_i, auth_token, last_sync_time])
+    
+    stream = Oneself::Stream.register(session['oneselfUsername'],
+                                      session['registrationToken'],
+                                      strava_user_id
+                                      )
 
-  sync(username, auth_token, stream)
+    sync(strava_user_id, stream)
 
-  redirect(Defaults::ONESELF_API_HOST + '/integrations')
+    redirect(Defaults::ONESELF_API_HOST + '/integrations')
+  rescue => e
+    puts "Error while strava callback #{e}"
+  end
 end
 
-
-def sync(uname, auth_token, stream)
+def sync(strava_id, stream)
   sync_start_event = Oneself::Event.sync("start")
-  Oneself::Event.send(sync_start_event)
+  Oneself::Event.send_via_api(sync_start_event, stream)
+  puts "Sent sync start event successfully"
 
+  conn = PG::Connection.open(:dbname => 'dev')
+  result = conn.exec("SELECT * FROM USERS WHERE STRAVA_ID = '#{strava_id}'")
+  
+  auth_token = result[0]["access_token"]
+  username = result[0]["name"]
+  since_time = result[0]["last_sync_time"]
+
+  puts "Fetching events for #{username}"
   strava_helper = StravaHelper.new(auth_token)
 
-  ride_events = strava_helper.get_events("Ride")
-  run_events = strava_helper.get_events("Run")
-  sync_end_event = Oneself::Event.sync("complete")
+  all_events = strava_helper.get_events(since_time) +
+    Oneself::Event.sync("complete")
 
-  all_events = ride_events + 
-    run_events + sync_end_event
+  Oneself::Event.send_via_api(all_events, stream)
 
-  Oneself::Event.send(all_events)
+  result = conn.exec("UPDATE USERS SET LAST_SYNC_TIME = #{Time.now.to_i} WHERE STRAVA_ID = '#{strava_id}'")
+  puts "Sync complete for #{username}"
 
-  puts "Sync complete"
+rescue => e
+  puts "Some error for: #{strava_id}. Error: #{e}"
 end
