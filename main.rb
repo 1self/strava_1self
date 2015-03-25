@@ -14,6 +14,11 @@ get '/' do
 end
 
 get '/login' do
+  if params[:username].nil? || params[:token].nil?
+    status 404
+    body 'Oneself parameters not found' and return
+  end
+
   session['oneselfUsername'] = params[:username]
   session['registrationToken'] = params[:token]
   puts "Redirecting #{params[:username]} to login."
@@ -26,12 +31,19 @@ get '/sync' do
   streamid = params[:streamid]
   write_token = request.env['HTTP_AUTHORIZATION']
 
+  if strava_id.nil? || streamid.nil? || write_token.nil?
+    status 404
+    body 'Oneself sync parameters not found' and return
+  end
+
   stream = {
-    "streamid": streamid,
-    "writeToken": write_token
+    "streamid" => streamid,
+    "writeToken" => write_token
   }
 
   start_sync(strava_id, stream)
+
+  "Sync request complete"
 end
 
 
@@ -55,6 +67,7 @@ get '/auth/strava/callback' do
     redirect(Defaults::ONESELF_API_HOST + '/integrations')
   rescue => e
     puts "Error while strava callback #{e}"
+    redirect(Defaults::ONESELF_API_HOST + '/integrations')
   end
 end
 

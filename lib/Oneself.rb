@@ -38,10 +38,12 @@ module Oneself
     extend self
 
     def transform_strava_event(evt)
+      evt_type = evt["type"].downcase
+
       { 
         dateTime: evt["start_date"],
         objectTags: ['self', 'fitness'],
-        actionTags: [evt["type"]],
+        actionTags: [evt_type],
         properties: {
           distance: evt["distance"],
           name: evt["name"],
