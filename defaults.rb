@@ -8,7 +8,7 @@ module Defaults
   end
 
   SESSION_SECRET = from_file("session_secret.txt")
-  HOST_URL = "http://localhost:5000"
+  HOST_URL = "https://oneself-strava.herokuapp.com"
   SYNC_ENDPOINT = "/sync"
 
   STRAVA_CLIENT_ID = from_file("strava_client_id.txt")
