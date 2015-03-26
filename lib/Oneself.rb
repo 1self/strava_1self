@@ -42,7 +42,7 @@ module Oneself
 
       { 
         dateTime: evt["start_date"],
-        objectTags: ['self', 'fitness'],
+        objectTags: ['self', 'exercise'],
         actionTags: [evt_type],
         properties: {
           distance: evt["distance"],
