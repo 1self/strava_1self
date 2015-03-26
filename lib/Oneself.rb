@@ -45,7 +45,7 @@ module Oneself
         objectTags: ['self', 'exercise'],
         actionTags: [evt_type],
         properties: {
-          distance: evt["distance"],
+          distance: evt["distance"].to_i,
           name: evt["name"],
           moving_time: evt["moving_time"],
           elapsed_time: evt["elapsed_time"],
