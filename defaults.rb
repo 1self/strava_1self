@@ -14,7 +14,7 @@ module Defaults
   STRAVA_CLIENT_ID = from_file("strava_client_id.txt")
   STRAVA_CLIENT_SECRET = from_file("strava_client_secret.txt")
 
-  ONESELF_API_HOST = "http://api.1self.co"
+  ONESELF_API_HOST = "http://api-staging.1self.co"
   ONESELF_STREAM_REGISTER_ENDPOINT = "/v1/users/%s/streams"
   ONESELF_SEND_EVENTS_ENDPOINT = "/v1/streams/%s/events/batch"
   ONESELF_APP_ID = from_file("oneself_app_id.txt")
