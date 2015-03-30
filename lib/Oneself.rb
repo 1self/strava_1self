@@ -42,8 +42,8 @@ module Oneself
 
       { 
         dateTime: evt["start_date"],
-        objectTags: ['self', 'exercise'],
-        actionTags: [evt_type],
+        objectTags: ['self'],
+        actionTags: ['exercise', evt_type],
         properties: {
           distance: evt["distance"].to_i,
           name: evt["name"],
