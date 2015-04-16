@@ -47,14 +47,14 @@ module Oneself
         properties: {
           distance: evt["distance"].to_i,
           name: evt["name"],
-          moving_time: evt["moving_time"],
-          elapsed_time: evt["elapsed_time"],
-          total_elevation_gain: evt["total_elevation_gain"],
+          "moving-time" => evt["moving_time"],
+          "elapsed-time" => evt["elapsed_time"],
+          "total-elevation-gain" => evt["total_elevation_gain"],
           city: evt["location_city"],
           state: evt["location_state"],
           country: evt["location_country"],
-          average_speed: evt["average_speed"],
-          max_speed: evt["max_speed"]
+          "average-speed" => evt["average_speed"],
+          "max-speed" => evt["max_speed"]
         }
       }
     end
