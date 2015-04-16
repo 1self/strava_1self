@@ -1,6 +1,8 @@
 require 'rest-client'
 require 'time'
 
+require_relative 'util'
+
 module Oneself
 
   module Stream
@@ -53,8 +55,8 @@ module Oneself
           city: evt["location_city"],
           state: evt["location_state"],
           country: evt["location_country"],
-          "average-speed" => evt["average_speed"],
-          "max-speed" => evt["max_speed"]
+          "average-speed" => Util.mps_to_kph(evt["average_speed"]),
+          "max-speed" => Util.mps_to_kph(evt["max_speed"])
         }
       }
     end
