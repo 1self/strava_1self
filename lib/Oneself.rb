@@ -49,9 +49,9 @@ module Oneself
         properties: {
           distance: evt["distance"].to_i,
           name: evt["name"],
-          "moving-time" => evt["moving_time"],
-          "elapsed-time" => evt["elapsed_time"],
-          "total-elevation-gain" => evt["total_elevation_gain"],
+          "moving-duration" => evt["moving_time"],
+          "elapsed-duration" => evt["elapsed_time"],
+          "elevation-gain" => evt["total_elevation_gain"],
           city: evt["location_city"],
           state: evt["location_state"],
           country: evt["location_country"],
