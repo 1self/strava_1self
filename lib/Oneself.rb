@@ -64,10 +64,10 @@ module Oneself
     def sync(type)
       [
        { dateTime: Time.now.utc.iso8601,
-         objectTags: ['sync'],
+         objectTags: ['1self', 'integration', 'sync'],
          actionTags: [type],
+         source: '1self-strava',
          properties: {
-           source: '1self-strava'
          }
        }
       ]
