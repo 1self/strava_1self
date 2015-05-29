@@ -54,7 +54,11 @@ get '/auth/strava/callback' do
     auth_token = request.env['omniauth.auth']['credentials']['token']
 
     last_sync_time = (DateTime.now << 1).to_time.to_i
-    conn = PG::Connection.open(:dbname => 'dev')
+     conn = PG::Connection.open(dbname: Defaults::STRAVA_DB_NAME,
+                              host: Defaults::STRAVA_DB_HOST,
+                              port: Defaults::STRAVA_DB_PORT.to_i,
+                              user: Defaults::STRAVA_DB_USER,
+                              password: Defaults::STRAVA_DB_PASSWORD)
     conn.exec_params('INSERT INTO USERS (name, strava_id, access_token, last_sync_time) VALUES ($1, $2, $3, $4)', [username, strava_user_id.to_i, auth_token, last_sync_time])
     
     stream = Oneself::Stream.register(session['oneselfUsername'],
@@ -77,7 +81,11 @@ def start_sync(strava_id, stream)
   Oneself::Event.send_via_api(sync_start_event, stream)
   puts "Sent sync start event successfully"
 
-  conn = PG::Connection.open(:dbname => 'dev')
+   conn = PG::Connection.open(dbname: Defaults::STRAVA_DB_NAME,
+                              host: Defaults::STRAVA_DB_HOST,
+                              port: Defaults::STRAVA_DB_PORT.to_i,
+                              user: Defaults::STRAVA_DB_USER,
+                              password: Defaults::STRAVA_DB_PASSWORD)
   result = conn.exec("SELECT * FROM USERS WHERE STRAVA_ID = '#{strava_id}'")
   
   auth_token = result[0]["access_token"]

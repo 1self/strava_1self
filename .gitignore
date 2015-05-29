@@ -3,3 +3,4 @@ strava_client_id.txt
 strava_client_secret.txt
 oneself_app_id.txt
 oneself_app_secret.txt
+.env
