@@ -21,6 +21,7 @@ get '/login' do
 
   session['oneselfUsername'] = params[:username]
   session['registrationToken'] = params[:token]
+  session['redirectUri'] = params[:redirect_uri]
   puts "Redirecting #{params[:username]} to login."
 
   redirect to("/auth/strava")
@@ -68,10 +69,10 @@ get '/auth/strava/callback' do
 
     start_sync(strava_user_id, stream)
 
-    redirect(Defaults::ONESELF_API_HOST + '/integrations')
+    redirect(session['redirectUri'])
   rescue => e
     puts "Error while strava callback #{e}"
-    redirect(Defaults::ONESELF_API_HOST + '/integrations')
+    redirect(session['redirectUri'])
   end
 end
 
