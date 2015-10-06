@@ -55,4 +55,5 @@ end
 
 use OmniAuth::Builder do
   provider :strava, Defaults::STRAVA_CLIENT_ID, Defaults::STRAVA_CLIENT_SECRET
+  OmniAuth.config.full_host = Defaults::HOST_URL
 end
