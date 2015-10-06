@@ -24,7 +24,7 @@ get '/login' do
   session['redirectUri'] = params[:redirect_uri]
   puts "Redirecting #{params[:username]} to login."
 
-  redirect to("/auth/strava")
+  redirect to(Defaults::HOST_URL + "/auth/strava")
 end
 
 get '/sync' do
