@@ -69,10 +69,10 @@ get '/auth/strava/callback' do
 
     start_sync(strava_user_id, stream)
 
-    redirect(session['redirectUri'])
+    redirect(session['redirectUri'] + "?success=true")
   rescue => e
     puts "Error while strava callback #{e}"
-    redirect(session['redirectUri'])
+    redirect(session['redirectUri'] + "?success=false&error=server_error")
   end
 end
 
