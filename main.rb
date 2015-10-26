@@ -105,7 +105,7 @@ def start_sync(strava_id, stream)
                               port: Defaults::STRAVA_DB_PORT.to_i,
                               user: Defaults::STRAVA_DB_USER,
                               password: Defaults::STRAVA_DB_PASSWORD)
-  result = conn.exec("SELECT * FROM USERS WHERE STRAVA_ID = '#{strava_id}'")
+  result = conn.exec_params("SELECT * FROM USERS WHERE STRAVA_ID = $1", [strava_id])
   
   auth_token = result[0]["access_token"]
   username = result[0]["name"]
@@ -121,7 +121,7 @@ def start_sync(strava_id, stream)
 
   new_last_sync_date = Time.now.to_i 
   puts "#{strava_id}: #{username}: start_sync: updating database with last sync time of #{new_last_sync_date}"
-  result = conn.exec("UPDATE USERS SET LAST_SYNC_TIME = #{new_last_sync_date} WHERE STRAVA_ID = '#{strava_id}'")
+  result = conn.exec_params("UPDATE USERS SET LAST_SYNC_TIME = $1 WHERE STRAVA_ID = $2", [new_last_sync_date, strava_id])
   puts "#{strava_id}: #{username}: start_sync: database updated"
   puts "#{strava_id}: #{username}: start_sync: complete"
 
